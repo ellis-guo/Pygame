@@ -1,14 +1,14 @@
-import pygame
-import sys
-import random
+import pygame # to create and control the game
+import sys # to handle quitting
+import random # for generating random food positions
 
 # Initialize the Pygame library to set up the game environment
 pygame.init()
 
 # Set up the dimensions of the game window
-WIDTH, HEIGHT = 600, 400
-window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Snake')
+WIDTH, HEIGHT = 600, 400 # set up screen dimensions to 600 by 400 pixels
+window = pygame.display.set_mode((WIDTH, HEIGHT)) # define a window using these dimensions 
+pygame.display.set_caption('Snake')  # give it the title “Snake”
 
 # Define RGB color values for various elements
 WHITE = (255, 255, 255)  # Color for text and messages
@@ -30,9 +30,9 @@ clock = pygame.time.Clock()
 font = pygame.font.SysFont('arial', 28)
 
 def show_message(text, color, pos):
-    """Display a text message on the screen.
+    """Display a text message on the screen at a specified position.
     
-    Args:
+    Parameters:
         text (str): The message text to display.
         color (tuple): RGB color of the text.
         pos (tuple): (x, y) position to place the text on the screen.
@@ -42,7 +42,9 @@ def show_message(text, color, pos):
     pygame.display.update()
 
 def game_over():
-    """Handle game-over logic and display options to restart or quit.
+    """Handle game-over logic:
+    Clears the screen, shows a “Game Over” message, and waits for the 
+    player to choose to restart or quit.
     
     Returns:
         bool: True if the player wants to play again, False to quit.
@@ -105,15 +107,15 @@ def game_loop():
     """
     # Initialize snake position, body segments, direction, and speed
     snake_pos = [100, 50]  # Initial position of the snake's head
-    snake_body = [[100, 50]]  # Initial body segment positions of the snake
-    direction = 'RIGHT'  # Start moving right
+    snake_body = [[100, 50]]  # a list that keeps track of all the segments of the snake
+    direction = 'RIGHT'  # The snake starts by moving to the right
     change_to = direction
     speed = 8  # Snake's movement speed (affects game difficulty)
 
     # Generate an initial random position for the food
     food_pos = [random.randrange(1, (WIDTH // SNAKE_SIZE)) * SNAKE_SIZE,
                 random.randrange(1, (HEIGHT // SNAKE_SIZE)) * SNAKE_SIZE]
-    food_spawn = True  # Boolean to track if food needs respawning
+    food_generate = True  # Boolean to track if food needs regenerateing, True to indicate that food is present
 
     # Initialize score
     score = 0
@@ -121,11 +123,12 @@ def game_loop():
     # Main loop for gameplay
     while True:
         # Process player input for snake direction
-        for event in pygame.event.get():
+        for event in pygame.event.get(): # loop through events, checks if any key has been pressed or if the game should quit
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN: # if an arrow key is pressed, update change_to to the new desired direction
+                # additional checking to prevent the snake from reversing directly
                 if event.key == pygame.K_UP and direction != 'DOWN':
                     change_to = 'UP'
                 elif event.key == pygame.K_DOWN and direction != 'UP':
@@ -139,7 +142,7 @@ def game_loop():
         direction = change_to
 
         # Move the snake's head in the current direction
-        if direction == 'UP':
+        if direction == 'UP': # decrease the Y-coordinate of snake_pos to move the head upward
             snake_pos[1] -= SNAKE_SIZE
         if direction == 'DOWN':
             snake_pos[1] += SNAKE_SIZE
@@ -149,26 +152,26 @@ def game_loop():
             snake_pos[0] += SNAKE_SIZE
 
         # Add a new segment at the head position
-        snake_body.insert(0, list(snake_pos))
+        snake_body.insert(0, list(snake_pos)) # updated snake_pos is then added to the beginning of snake_body, creating a new head position
         # Check if snake has collided with food
         if pygame.Rect(snake_pos[0], snake_pos[1], SNAKE_SIZE, SNAKE_SIZE).colliderect(
             pygame.Rect(food_pos[0], food_pos[1], SNAKE_SIZE, SNAKE_SIZE)):
-            food_spawn = False  # Mark that food needs to respawn
+            food_generate = False  # Mark that food needs to regenerate
             score += 1  # Increase score when food is eaten
         else:
             # If food not eaten, remove the last segment to maintain the current length
             snake_body.pop()
 
-        # Respawn food at a new location if it was eaten
-        if not food_spawn:
+        # Food reappear at a new location if it was eaten
+        if not food_generate:
             food_pos = [random.randrange(1, (WIDTH // SNAKE_SIZE)) * SNAKE_SIZE,
                         random.randrange(1, (HEIGHT // SNAKE_SIZE)) * SNAKE_SIZE]
-        food_spawn = True
+        food_generate = True
 
         # Fill the background color for each frame
         window.fill(bg_color)
 
-        # Draw the snake on the screen
+        # Draw the snake on the screen 
         for pos in snake_body:
             pygame.draw.rect(window, snake_color, pygame.Rect(
                 pos[0], pos[1], SNAKE_SIZE, SNAKE_SIZE))
