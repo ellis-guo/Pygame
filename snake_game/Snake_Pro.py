@@ -56,7 +56,7 @@ class SnakeGame:
     
     def draw_snake(self, snake_body):
         # Beautified the graphics of the snake
-        SNAKE_HEAD_COLOR = (31, 64, 237)
+        SNAKE_HEAD_COLOR = (31, 64, 238)
         SNAKE_TAIL_COLOR = (0, 128, 128)
         
         for index, pos in enumerate(snake_body):
@@ -122,6 +122,7 @@ class SnakeGame:
                                TOP_MARGIN + GAME_HEIGHT - BORDER_THICKNESS - SNAKE_SIZE, 
                                SNAKE_SIZE)
             ]
+            # Ensures food does not spawn on the snake body
             if food_pos not in snake_body:
                 return food_pos
 
@@ -257,7 +258,9 @@ class SnakeGame:
             self.clock.tick(speed)
 
     def pause_menu(self):
-        """Display pause menu"""
+        """
+        You can pause to attend to urgent matters and then come back to your journey anytime!
+        """
         overlay = pygame.Surface((WIDTH, HEIGHT))
         overlay.fill(BLACK)
         overlay.set_alpha(200)
@@ -288,7 +291,7 @@ class SnakeGame:
                         return 'quit'
     
     def update_food_properties(self):
-        # Make the food randomly shifts in color and size
+        # Make the food randomly shifts in both color and size
         if not (0 <= self.food_color[1] + 5 * self.color_direction <= 255):
             self.color_direction *= -1
         self.food_color[1] += 5 * self.color_direction
